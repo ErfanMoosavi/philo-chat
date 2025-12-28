@@ -1,13 +1,13 @@
 import os
 import json
 
-from internals.chat_completer import ChatCompleter
-from internals.prompt_loader import PromptLoader
-from internals.user import User
-from internals.philosopher import Philosopher
-from internals.chat import Chat
-from internals.message import Message
-from internals.status import Status
+from .chat_completer import ChatCompleter
+from .prompt_loader import PromptLoader
+from .user import User
+from .philosopher import Philosopher
+from .chat import Chat
+from .message import Message
+from .status import Status
 
 
 class System:

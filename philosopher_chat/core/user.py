@@ -1,9 +1,9 @@
 from typing import Optional
 
-from internals.chat import Chat
-from internals.message import Message
-from internals.status import Status
-from internals.philosopher import Philosopher
+from .chat import Chat
+from .message import Message
+from .status import Status
+from .philosopher import Philosopher
 
 
 class User:

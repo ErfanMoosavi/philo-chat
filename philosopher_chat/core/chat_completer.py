@@ -1,6 +1,6 @@
 from openai import OpenAI
 
-from internals.message import Message
+from .message import Message
 
 
 class ChatCompleter:

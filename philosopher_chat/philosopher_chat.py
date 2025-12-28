@@ -1,8 +1,8 @@
 from enum import Enum
 
-from internals.system import System
-from internals.status import Status
-from internals.io_handler import ConsoleIOHandler
+from .core.system import System
+from .core.status import Status
+from .core.io_handler import ConsoleIOHandler
 
 
 class Commands(Enum):

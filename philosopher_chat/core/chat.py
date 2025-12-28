@@ -1,6 +1,6 @@
-from internals.status import Status
-from internals.message import Message
-from internals.philosopher import Philosopher
+from .status import Status
+from .message import Message
+from .philosopher import Philosopher
 
 
 class Chat:
