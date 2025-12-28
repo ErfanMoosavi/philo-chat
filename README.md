@@ -1,5 +1,8 @@
 # Philosopher Chat
 
+![PyPI](https://img.shields.io/pypi/v/philosopher_chat)
+![License](https://img.shields.io/pypi/l/philosopher_chat)
+
 Chat with your favorite philosophers-Nietzsche, Socrates, and more-in real-time!
 
 ## 📌 Overview
@@ -39,7 +42,7 @@ Philosopher Chat is an interactive command-line application that allows users to
 ## 🚀 Installation
 
 ```bash
-pip install philosopher-chat
+pip install -U philosopher-chat
 ```
 
 ---
@@ -59,8 +62,6 @@ MODEL_NAME=your_model_name
 ```python
 from philosopher_chat import PhilosopherChat
 
-# Load environment variables from .env
-# You can also pass variables manually
 load_dotenv()
 BASE_URL = os.getenv("BASE_URL")
 API_KEY = os.getenv("OPENAI_API_KEY")
@@ -71,16 +72,3 @@ pc.run()
 ```
 
 ### 3. Follow the CLI prompts to sign up, log in, and start chatting.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome!  
-Feel free to **open issues, suggest new features, or submit pull requests**.  
-
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
