@@ -3,7 +3,7 @@ import yaml
 
 
 class PromptLoader:
-    PROMPTS_DIR = "prompts"
+    PROMPTS_DIR = "data"
     PROMPT_FILE = "prompt_template.yaml"
 
     def _load_templates(self) -> dict[str, str]:
