@@ -1,8 +1,7 @@
 from enum import Enum
 
 from .core.system import System
-from .core.status import Status
-from .core.io_handler import ConsoleIOHandler
+from .io_handlers.io_handler import ConsoleIOHandler
 
 
 class Commands(Enum):
@@ -21,6 +20,8 @@ class Commands(Enum):
 
 
 class PhilosopherChat:
+    SUCCESS = "Success"
+
     def __init__(self, base_url: str, api_key: str, model_name: str):
         self.system = System(base_url, api_key, model_name)
         self.io = ConsoleIOHandler()
@@ -75,23 +76,22 @@ class PhilosopherChat:
     def _handle_signup(self) -> str:
         username = self.io.get_input("Enter your username: ")
         password = self.io.get_input("Enter your password: ")
-        return self.system.signup(username, password).value
+        self.system.signup(username, password)
+        return self.SUCCESS
 
     def _handle_login(self) -> str:
         username = self.io.get_input("Enter your username: ")
         password = self.io.get_input("Enter your password: ")
-        return self.system.login(username, password).value
+        self.system.login(username, password)
+        return self.SUCCESS
 
     def _handle_new_chat(self) -> str:
-        chat_name = self.io.get_input("Enter the chat name: ")
-
-        status, philosophers_list = self.system.list_philosophers()
-        if status != Status.SUCCESS:
-            return "No philosophers found."
-
-        self.io.display_philosophers_list(philosophers_list)
-
         try:
+            chat_name = self.io.get_input("Enter the chat name: ")
+            philosophers_list = self.system.list_philosophers()
+
+            self.io.display_philosophers_list(philosophers_list)
+
             philosopher_id = (
                 int(self.io.get_input("Choose a philosopher by number: ")) - 1
             )
@@ -102,54 +102,68 @@ class PhilosopherChat:
             actual_philosopher_id = list(self.system.philosophers.keys())[
                 philosopher_id
             ]
+            self.system.new_chat(chat_name, actual_philosopher_id)
+            return self.SUCCESS
+
         except (ValueError, IndexError):
             return "Invalid input. Please enter a valid number."
-
-        return self.system.new_chat(chat_name, actual_philosopher_id).value
+        except Exception:
+            return "No philosophers found."
 
     def _handle_select_chat(self) -> str:
         name = self.io.get_input("Enter the chat name: ")
         return self._handle_chat_session(name)
 
     def _handle_chat_session(self, name: str) -> str:
-        status, all_messages = self.system.select_chat(name)
-        if status != Status.SUCCESS:
-            return status.value
+        try:
+            all_messages = self.system.select_chat(name)
 
-        # Display chat history
-        for msg in all_messages:
-            self.io.display_chat_message(self._format_message(msg))
+            # Display chat history
+            for msg in all_messages:
+                self.io.display_chat_message(self._format_message(msg))
 
-        # Chat loop
-        while self.system.logged_in_user and self.system.logged_in_user.selected_chat:
-            input_text = self.io.get_input(
-                "Enter your message (type 'exit_chat' to leave): "
-            )
-            if input_text == Commands.EXIT_CHAT.value:
-                self.system.exit_chat()
-                break
+            # Chat loop
+            while (
+                self.system.logged_in_user and self.system.logged_in_user.selected_chat
+            ):
+                input_text = self.io.get_input(
+                    "Enter your message (type 'exit_chat' to leave): "
+                )
+                if input_text == Commands.EXIT_CHAT.value:
+                    self.system.exit_chat()
+                    break
 
-            status, ai_msg, user_msg = self.system.complete_chat(input_text)
-            if status == Status.SUCCESS:
+                ai_msg, user_msg = self.system.complete_chat(input_text)
+
                 self.io.display_chat_message(self._format_message(user_msg))
                 self.io.display_chat_message(self._format_message(ai_msg))
-            else:
-                self.io.display_message(f"Error: {status.value}")
 
-        return "Exited chat."
+            return "Exited chat."
+
+        except Exception as e:
+            self.io.display_message(str(e))
 
     def _handle_list_chats(self) -> str:
-        status, chats = self.system.list_chats()
-        if status == Status.SUCCESS:
+        try:
+            chats = self.system.list_chats()
             self.io.display_chats_list(chats)
-        return status.value
+
+        except Exception as e:
+            self.io.display_message(str(e))
 
     def _handle_delete_chat(self) -> str:
-        name = self.io.get_input("Enter the chat name: ")
-        return self.system.delete_chat(name).value
+        try:
+            name = self.io.get_input("Enter the chat name: ")
+            self.system.delete_chat(name)
+            return self.SUCCESS
+
+        except Exception as e:
+            self.io.display_message(str(e))
 
     def _handle_list_philosophers(self) -> str:
-        status, philosophers_list = self.system.list_philosophers()
-        if status == Status.SUCCESS:
+        try:
+            philosophers_list = self.system.list_philosophers()
             self.io.display_philosophers_list(philosophers_list)
-        return status.value
+
+        except Exception as e:
+            self.io.display_message(str(e))

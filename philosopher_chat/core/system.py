@@ -1,13 +1,13 @@
 import json
 from pathlib import Path
 
-from .chat import Chat
-from .chat_completer import ChatCompleter
-from .message import Message
-from .philosopher import Philosopher
+from .exceptions import BadRequestError, NotFoundError, PermissionDeniedError
+from .entities.chat import Chat
+from .entities.chat_completer import ChatCompleter
+from .entities.message import Message
+from .entities.philosopher import Philosopher
+from .entities.user import User
 from .prompt_loader import PromptLoader
-from .status import Status
-from .user import User
 
 
 class System:
@@ -18,84 +18,80 @@ class System:
         self.philosophers: dict[int, Philosopher] = self._load_philosophers()
         self.logged_in_user: User | None = None
 
-    def signup(self, username: str, password: str) -> Status:
+    def signup(self, username: str, password: str) -> None:
         if self.logged_in_user:
-            return Status.PERMISSION_DENIED
+            raise PermissionDeniedError("You've already logged in")
         elif self._find_user(username):
-            return Status.BAD_REQUEST
+            raise BadRequestError(f"Username {username} already taken")
 
         new_user = User(username, password)
         self.users[username] = new_user
-        return Status.SUCCESS
 
-    def login(self, username: str, password: str) -> Status:
+    def login(self, username: str, password: str) -> None:
         user = self._find_user(username)
 
         if self.logged_in_user:
-            return Status.PERMISSION_DENIED
+            raise PermissionDeniedError("You've already logged in")
         elif not user:
-            return Status.NOT_FOUND
+            raise NotFoundError("Username not found")
         elif user.password != password:
-            return Status.PERMISSION_DENIED
+            raise PermissionDeniedError("Wrong password")
 
         self.logged_in_user = user
-        return Status.SUCCESS
 
-    def logout(self) -> Status:
+    def logout(self) -> None:
         if not self.logged_in_user:
-            return Status.PERMISSION_DENIED
+            raise PermissionDeniedError("No user is logged in")
 
         self.logged_in_user = None
-        return Status.SUCCESS
 
-    def delete_account(self) -> Status:
+    def delete_account(self) -> None:
         if not self.logged_in_user:
-            return Status.PERMISSION_DENIED
+            raise PermissionDeniedError("No user is logged in")
 
         del self.users[self.logged_in_user.username]
         self.logout()
-        return Status.SUCCESS
 
-    def new_chat(self, name: str, philosopher_id: int) -> Status:
+    def new_chat(self, name: str, philosopher_id: int) -> None:
         if not self.logged_in_user:
-            return Status.BAD_REQUEST
+            raise BadRequestError("No user is logged in")
 
         philosopher = self._find_philosopher(philosopher_id)
         return self.logged_in_user.new_chat(name, philosopher)
 
-    def select_chat(self, name: str) -> tuple[Status, list[Message]]:
+    def select_chat(self, name: str) -> list[Message]:
         if not self.logged_in_user:
-            return Status.BAD_REQUEST
+            raise BadRequestError("No user is logged in")
 
         return self.logged_in_user.select_chat(name)
 
-    def list_chats(self) -> tuple[Status, list[Chat]]:
+    def list_chats(self) -> list[Chat]:
         if not self.logged_in_user:
-            return Status.BAD_REQUEST, []
+            raise BadRequestError("No user is logged in")
 
         return self.logged_in_user.list_chats()
 
-    def exit_chat(self) -> Status:
+    def exit_chat(self) -> None:
         if not self.logged_in_user:
-            return Status.BAD_REQUEST
+            raise BadRequestError("No user is logged in")
 
         return self.logged_in_user.exit_chat()
 
-    def delete_chat(self, name: str) -> Status:
+    def delete_chat(self, name: str) -> None:
         if not self.logged_in_user:
-            return Status.BAD_REQUEST
+            raise BadRequestError("No user is logged in")
 
         return self.logged_in_user.delete_chat(name)
 
-    def list_philosophers(self) -> tuple[Status, list[Philosopher]]:
+    def list_philosophers(self) -> list[Philosopher]:
         if not self.philosophers:
-            return Status.NOT_FOUND, []
+            raise NotFoundError("No philosopher found")
 
-        return Status.SUCCESS, list(self.philosophers.values())
+        return list(self.philosophers.values())
 
-    def complete_chat(self, input_text: str) -> tuple[Status, Message, Message]:
+    def complete_chat(self, input_text: str) -> tuple[Message, Message]:
         if not self.logged_in_user:
-            return Status.BAD_REQUEST
+            raise BadRequestError("No user is logged in")
 
         return self.logged_in_user.complete_chat(
             input_text, self.prompt_loader, self.chat_completer

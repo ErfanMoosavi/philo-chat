@@ -1,5 +1,6 @@
 from openai import OpenAI
 
+from ..exceptions import LLMError
 from .message import Message
 
 
@@ -9,12 +10,16 @@ class ChatCompleter:
         self.model_name = model_name
 
     def complete_chat(self, messages: list[Message]) -> str:
-        completion_messages = [self._msg_to_dict(msg) for msg in messages]
+        try:
+            completion_messages = [self._msg_to_dict(msg) for msg in messages]
 
-        completion = self.client.chat.completions.create(
-            model=self.model_name, messages=completion_messages
-        )
-        return completion.choices[0].message.content.strip()
+            completion = self.client.chat.completions.create(
+                model=self.model_name, messages=completion_messages
+            )
+            return completion.choices[0].message.content.strip()
+
+        except Exception as e:
+            raise LLMError(f"Completion failed: {e}")
 
     def _msg_to_dict(self, msg: Message) -> dict[str, str]:
         return {"role": msg.role, "content": msg.content}

@@ -1,6 +1,6 @@
 from .message import Message
 from .philosopher import Philosopher
-from .status import Status
+from ..exceptions import BadRequestError
 
 
 class Chat:
@@ -11,10 +11,10 @@ class Chat:
 
     def complete_chat(
         self, input_text: str, username: str, prompt_loader, chat_completer
-    ) -> tuple[Status, Message, Message]:
+    ) -> tuple[Message, Message]:
         cleaned_input = input_text.strip()
         if not cleaned_input:
-            return Status.BAD_REQUEST, None
+            raise BadRequestError("Message cannot be empty")
 
         if self._is_first_message():
             prompt = prompt_loader.load_prompts(cleaned_input, self.philosopher.name)
@@ -28,7 +28,7 @@ class Chat:
         ai_msg = Message("assistant", self.philosopher.name, response)
         self._add_message(ai_msg)
 
-        return Status.SUCCESS, ai_msg, user_msg
+        return ai_msg, user_msg
 
     def get_history(self) -> list[Message]:
         return self.messages[1:]

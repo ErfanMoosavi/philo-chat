@@ -1,9 +1,7 @@
-from typing import Optional
-
+from ..exceptions import BadRequestError, NotFoundError
 from .chat import Chat
 from .message import Message
 from .philosopher import Philosopher
-from .status import Status
 
 
 class User:
@@ -11,57 +9,53 @@ class User:
         self.username = username
         self.password = password
         self.chats: dict[str, Chat] = {}
-        self.selected_chat: Optional[Chat] = None
+        self.selected_chat: Chat | None = None
 
-    def new_chat(self, name: str, philosopher: Philosopher) -> Status:
+    def new_chat(self, name: str, philosopher: Philosopher) -> None:
         if self._find_chat(name):
-            return Status.BAD_REQUEST
+            raise BadRequestError("Chat already exists")
 
         new_chat = Chat(name, philosopher)
         self.chats[name] = new_chat
-        return Status.SUCCESS
 
-    def select_chat(self, name: str) -> tuple[Status, list[Message]]:
+    def select_chat(self, name: str) -> list[Message]:
         chat = self._find_chat(name)
         if not chat:
-            return Status.NOT_FOUND, []
+            raise NotFoundError("Chat not found")
 
         self.selected_chat = chat
-        return Status.SUCCESS, self.selected_chat.get_history()
+        return self.selected_chat.get_history()
 
-    def list_chats(self) -> tuple[Status, list[Chat]]:
+    def list_chats(self) -> list[Chat]:
         if not self.chats:
-            return Status.NOT_FOUND, []
+            raise NotFoundError("No chats found")
 
-        return Status.SUCCESS, list(self.chats.values())
+        return list(self.chats.values())
 
-    def exit_chat(self) -> Status:
+    def exit_chat(self) -> None:
         if not self.selected_chat:
-            return Status.BAD_REQUEST
+            raise BadRequestError("No chats selected")
 
         self.selected_chat = None
-        return Status.SUCCESS
 
-    def delete_chat(self, name: str) -> Status:
+    def delete_chat(self, name: str) -> None:
         chat = self._find_chat(name)
         if not chat:
-            return Status.NOT_FOUND
+            raise NotFoundError("Chat not found")
 
         if self.selected_chat == chat:
             self.selected_chat = None
-
         del self.chats[name]
-        return Status.SUCCESS
 
     def complete_chat(
         self, input_text: str, prompt_loader, chat_completer
-    ) -> tuple[Status, Message, Message]:
+    ) -> tuple[Message, Message]:
         if not self.selected_chat:
-            return Status.BAD_REQUEST
+            raise BadRequestError("No chats selected")
 
         return self.selected_chat.complete_chat(
             input_text, self.username, prompt_loader, chat_completer
         )
 
-    def _find_chat(self, name: str) -> Optional[Chat]:
+    def _find_chat(self, name: str) -> Chat | None:
         return self.chats.get(name)
