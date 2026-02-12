@@ -30,8 +30,8 @@ pip install -U philosopher-chat
 
 # 2. Create .env file with your API credentials
 echo "BASE_URL=your_url" > .env
-echo "OPENAI_API_KEY=your_key" >> .env
-echo "MODEL_NAME=your_model" >> .env
+echo "OPENAI_API_KEY=your_key" > .env
+echo "MODEL_NAME=your_model" > .env
 
 # 3. Run!
 philosopher-chat
