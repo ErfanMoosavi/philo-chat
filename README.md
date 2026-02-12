@@ -1,13 +1,13 @@
-# Philosopher Chat
+# PhiloChat
 
-![PyPI](https://img.shields.io/pypi/v/philosopher_chat)
-![License](https://img.shields.io/pypi/l/philosopher_chat)
+![PyPI](https://img.shields.io/pypi/v/philo-chat)
+![License](https://img.shields.io/pypi/l/philo-chat)
 
-Chat with your favorite philosophers-Nietzsche, Socrates, and more-in real-time!
+Chat with your favorite philosophers - Nietzsche, Socrates, and more-in real-time!
 
 ## 📌 Overview
 
-Philosopher Chat is an interactive command-line application that allows users to have AI-powered conversations with famous philosophers. Each philosopher responds in their distinctive style, language, and perspective. Users can create multiple chats, select philosophers, and maintain conversation histories.
+Philo-Chat is an interactive command-line application that allows users to have AI-powered conversations with famous philosophers. Each philosopher responds in their distinctive style, language, and perspective. Users can create multiple chats, select philosophers, and maintain conversation histories.
 
 ---
 
@@ -26,7 +26,7 @@ Philosopher Chat is an interactive command-line application that allows users to
 
 ```bash
 # 1. Install
-pip install -U philosopher-chat
+pip install -U philo-chat
 
 # 2. Create .env file with your API credentials
 echo "BASE_URL=your_url" > .env
@@ -34,7 +34,7 @@ echo "OPENAI_API_KEY=your_key" > .env
 echo "MODEL_NAME=your_model" > .env
 
 # 3. Run!
-philosopher-chat
+philo-chat
 ```
 
 ---

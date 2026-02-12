@@ -1,7 +1,11 @@
+import os
+import sys
 from enum import Enum
 
-from .core.system import System
-from .io_handlers.console_io_handler import ConsoleIOHandler
+from dotenv import load_dotenv
+
+from .console_io_handler import ConsoleIOHandler
+from ..philo_chat import PhiloChat
 
 
 class Commands(Enum):
@@ -19,11 +23,11 @@ class Commands(Enum):
     EXIT = "exit"
 
 
-class PhilosopherChat:
+class PhiloChatCLI:
     SUCCESS = "Success"
 
     def __init__(self, base_url: str, api_key: str, model_name: str) -> None:
-        self.system = System(base_url, api_key, model_name)
+        self.system = PhiloChat(base_url, api_key, model_name)
         self.io = ConsoleIOHandler()
         self.help_menu = "Available commands:\n" + "\n".join(
             [f"\t-{command.value}" for command in Commands]
@@ -192,3 +196,27 @@ class PhilosopherChat:
 
         except Exception as e:
             self.io.display_message(str(e))
+
+
+def main():
+    """Entry point for the philo-chat console script."""
+
+    load_dotenv()
+    base_url = os.getenv("BASE_URL")
+    api_key = os.getenv("OPENAI_API_KEY")
+    model_name = os.getenv("MODEL_NAME")
+
+    if not all([base_url, api_key, model_name]):
+        print("Missing environment variables. Create a .env file with:")
+        print("BASE_URL=your_url")
+        print("OPENAI_API_KEY=your_key")
+        print("MODEL_NAME=your_model")
+        sys.exit(1)
+
+    # Run the app
+    pcli = PhiloChatCLI(base_url, api_key, model_name)
+    pcli.run()
+
+
+if __name__ == "__main__":
+    main()

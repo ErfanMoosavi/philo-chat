@@ -1,15 +1,15 @@
 import json
 from pathlib import Path
 
-from .entities.chat import Chat
-from .entities.chat_completer import ChatCompleter
-from .entities.message import Message
-from .entities.philosopher import Philosopher
-from .entities.user import User
-from .exceptions import BadRequestError, NotFoundError, PermissionDeniedError
+from .core.entities.chat import Chat
+from .core.entities.chat_completer import ChatCompleter
+from .core.entities.message import Message
+from .core.entities.philosopher import Philosopher
+from .core.entities.user import User
+from .core.exceptions import BadRequestError, NotFoundError, PermissionDeniedError
 
 
-class System:
+class PhiloChat:
     def __init__(self, base_url: str, api_key: str, model_name: str) -> None:
         self.chat_completer = ChatCompleter(base_url, api_key, model_name)
         self.users: dict[str, User] = {}
@@ -100,7 +100,7 @@ class System:
         return self.philosophers.get(philosopher_id)
 
     def _load_philosophers(self) -> dict[int, Philosopher]:
-        data_dir = Path(__file__).parent.parent / "data/philosophers.json"
+        data_dir = Path(__file__).parent / "data/philosophers.json"
 
         with open(data_dir, "r", encoding="utf-8") as f:
             raw_philosophers = json.load(f)
