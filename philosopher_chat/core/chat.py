@@ -1,6 +1,6 @@
-from .status import Status
 from .message import Message
 from .philosopher import Philosopher
+from .status import Status
 
 
 class Chat:

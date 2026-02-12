@@ -1,13 +1,13 @@
-import os
 import json
+from pathlib import Path
 
-from .chat_completer import ChatCompleter
-from .prompt_loader import PromptLoader
-from .user import User
-from .philosopher import Philosopher
 from .chat import Chat
+from .chat_completer import ChatCompleter
 from .message import Message
+from .philosopher import Philosopher
+from .prompt_loader import PromptLoader
 from .status import Status
+from .user import User
 
 
 class System:
@@ -108,11 +108,8 @@ class System:
         return self.philosophers.get(philosopher_id)
 
     def _load_philosophers(self) -> dict[int, Philosopher]:
-        path = os.path.join(
-            os.path.dirname(__file__), "..", "data", "philosophers.json"
-        )
-        path = os.path.abspath(path)
-        with open(path, "r", encoding="utf-8") as f:
+        data_dir = Path(__file__).parent.parent / "data/philosophers.json"
+        with open(data_dir, "r", encoding="utf-8") as f:
             raw_philosophers = json.load(f)
 
         philosophers = {}

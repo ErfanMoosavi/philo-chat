@@ -2,8 +2,8 @@ from typing import Optional
 
 from .chat import Chat
 from .message import Message
-from .status import Status
 from .philosopher import Philosopher
+from .status import Status
 
 
 class User:
