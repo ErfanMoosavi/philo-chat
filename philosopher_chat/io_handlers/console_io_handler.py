@@ -9,7 +9,7 @@ class ConsoleIOHandler:
         print("-" * 50)
         print(message)
 
-    def display_philosophers_list(self, philosophers: list) -> None:
+    def display_philosophers(self, philosophers: list) -> None:
         for i, philosopher in enumerate(philosophers, start=1):
             print(f"{i}. {philosopher.name}")
 

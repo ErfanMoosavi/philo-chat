@@ -81,7 +81,7 @@ class System:
 
         return self.logged_in_user.delete_chat(name)
 
-    def list_philosophers(self) -> list[Philosopher]:
+    def get_philosophers(self) -> list[Philosopher]:
         if not self.philosophers:
             raise NotFoundError("No philosopher found")
 
