@@ -17,6 +17,9 @@ dependencies = [
   "pyyaml>=6.0",
 ]
 
+[project.scripts]
+philosopher-chat = "philosopher_chat.__main__:main"
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["philosopher_chat*"]
