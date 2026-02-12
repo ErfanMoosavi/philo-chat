@@ -25,4 +25,4 @@ include = ["philosopher_chat*"]
 include-package-data = true
 
 [tool.setuptools.package-data]
-"philosopher_chat" = ["data/*.json", "py.typed"]
+"philosopher_chat" = ["data/*.json", "data/*.yaml", "py.typed"]
