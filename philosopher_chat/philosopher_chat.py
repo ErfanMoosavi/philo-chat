@@ -22,16 +22,17 @@ class Commands(Enum):
 class PhilosopherChat:
     SUCCESS = "Success"
 
-    def __init__(self, base_url: str, api_key: str, model_name: str):
+    def __init__(self, base_url: str, api_key: str, model_name: str) -> None:
         self.system = System(base_url, api_key, model_name)
         self.io = ConsoleIOHandler()
         self.help_menu = "Available commands:\n" + "\n".join(
             [f"\t-{command.value}" for command in Commands]
         )
 
-    def run(self):
-        self.io.display_message("Welcome to Philosopher Chat!")
-        self.io.display_message(self.help_menu)
+    def run(self) -> None:
+        self.io.display_message(
+            "Welcome to Philosopher Chat!\nCommands? Type 'help' and see what's possible"
+        )
 
         while True:
             command = self.io.get_input("Please enter the command: ")
@@ -45,7 +46,7 @@ class PhilosopherChat:
                 self.io.display_message(result)
 
     def _format_message(self, msg) -> str:
-        return f"[{msg.time}] {msg.author} →\n{msg.content}"
+        return f"[{msg.time}] {msg.author} ->\n{msg.content}"
 
     def _handle_command(self, command: str) -> str:
         if command == Commands.SIGNUP.value:
