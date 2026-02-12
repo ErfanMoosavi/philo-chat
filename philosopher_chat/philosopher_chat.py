@@ -1,7 +1,7 @@
 from enum import Enum
 
 from .core.system import System
-from .io_handlers.io_handler import ConsoleIOHandler
+from .io_handlers.console_io_handler import ConsoleIOHandler
 
 
 class Commands(Enum):

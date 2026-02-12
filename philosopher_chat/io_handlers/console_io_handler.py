@@ -1,29 +1,4 @@
-from abc import ABC, abstractmethod
-
-
-class IOHandler(ABC):
-    @abstractmethod
-    def display_message(self, message: str) -> None:
-        pass
-
-    @abstractmethod
-    def get_input(self, prompt: str) -> str:
-        pass
-
-    @abstractmethod
-    def display_chat_message(self, message: str) -> None:
-        pass
-
-    @abstractmethod
-    def display_philosophers_list(self, philosophers: list) -> None:
-        pass
-
-    @abstractmethod
-    def display_chats_list(self, chats: list) -> None:
-        pass
-
-
-class ConsoleIOHandler(IOHandler):
+class ConsoleIOHandler:
     def display_message(self, message: str) -> None:
         print(message)
 
