@@ -209,10 +209,11 @@ def main():
     api_key = args.api_key
     model_name = args.model
 
-    load_dotenv()
-    base_url = os.getenv("BASE_URL")
-    api_key = os.getenv("OPENAI_API_KEY")
-    model_name = os.getenv("MODEL_NAME")
+    if not args.base_url:
+        load_dotenv()
+        base_url = os.getenv("BASE_URL")
+        api_key = os.getenv("OPENAI_API_KEY")
+        model_name = os.getenv("MODEL_NAME")
 
     if not all([base_url, api_key, model_name]):
         print("Missing environment variables. Create a .env file with:")
