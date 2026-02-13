@@ -5,13 +5,19 @@ from .philosopher import Philosopher
 
 
 class User:
-    def __init__(self, username: str, password: str, name: str, age: int) -> None:
+    def __init__(self, username: str, password: str) -> None:
         self.username = username
         self.password = password
-        self.name = name
-        self.age = age
+        self.name = "Not Provided"
+        self.age = "Not Provided"
         self.chats: dict[str, Chat] = {}
         self.selected_chat: Chat | None = None
+
+    def set_name(self, name: str) -> None:
+        self.name = name
+
+    def set_age(self, age: int) -> None:
+        self.age = age
 
     def new_chat(self, name: str, philosopher: Philosopher) -> None:
         if self._find_chat(name):

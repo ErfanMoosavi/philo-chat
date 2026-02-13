@@ -14,6 +14,8 @@ class Commands(Enum):
     LOGIN = "login"
     LOGOUT = "logout"
     DELETE_ACCOUNT = "delete_account"
+    SET_NAME = "set_name"
+    SET_AGE = "set_age"
     NEW_CHAT = "new_chat"
     SELECT_CHAT = "select_chat"
     LIST_CHATS = "list_chats"
@@ -66,6 +68,10 @@ class PhiloChatCLI:
             return self._handle_logout()
         elif command == Commands.DELETE_ACCOUNT.value:
             return self._handle_delete_account()
+        elif command == Commands.SET_NAME.value:
+            return self._handle_set_name()
+        elif command == Commands.SET_AGE.value:
+            return self._handle_set_age()
         elif command == Commands.NEW_CHAT.value:
             return self._handle_new_chat()
         elif command == Commands.SELECT_CHAT.value:
@@ -87,9 +93,7 @@ class PhiloChatCLI:
         try:
             username = self.io.get_input("Enter your username: ")
             password = self.io.get_input("Enter your password: ")
-            name = self.io.get_input("Enter your name: ")
-            age = self.io.get_input("Enter your age: ")
-            self.system.signup(username, password, name, age)
+            self.system.signup(username, password)
             return self.SUCCESS
 
         except Exception as e:
@@ -121,9 +125,27 @@ class PhiloChatCLI:
         except Exception as e:
             self.io.display_message(str(e))
 
+    def _handle_set_name(self) -> str:
+        try:
+            name = self.io.get_input("Enter your name: ")
+            self.system.set_name(name)
+            return self.SUCCESS
+
+        except Exception as e:
+            self.io.display_message(str(e))
+
+    def _handle_set_age(self) -> str:
+        try:
+            age = self.io.get_input("Enter your age: ")
+            self.system.set_age(age)
+            return self.SUCCESS
+
+        except Exception as e:
+            self.io.display_message(str(e))
+
     def _handle_new_chat(self) -> str:
         try:
-            chat_name = self.io.get_input("Enter the chat name: ")
+            chat_name = self.io.get_input("Enter chat name: ")
             philosophers_list = self.system.list_philosophers()
 
             self.io.display_philosophers_list(philosophers_list)
@@ -145,7 +167,7 @@ class PhiloChatCLI:
             self.io.display_message(str(e))
 
     def _handle_select_chat(self) -> str:
-        name = self.io.get_input("Enter the chat name: ")
+        name = self.io.get_input("Enter chat name: ")
         return self._handle_chat_session(name)
 
     def _handle_chat_session(self, name: str) -> str:
@@ -187,7 +209,7 @@ class PhiloChatCLI:
 
     def _handle_delete_chat(self) -> str:
         try:
-            name = self.io.get_input("Enter the chat name: ")
+            name = self.io.get_input("Enter chat name: ")
             self.system.delete_chat(name)
             return self.SUCCESS
 

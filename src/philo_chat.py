@@ -16,13 +16,13 @@ class PhiloChat:
         self.philosophers: dict[int, Philosopher] = self._load_philosophers()
         self.logged_in_user: User | None = None
 
-    def signup(self, username: str, password: str, name: str, age: int) -> None:
+    def signup(self, username: str, password: str) -> None:
         if self.logged_in_user:
             raise PermissionDeniedError("You are already logged in")
         elif self._find_user(username):
             raise BadRequestError(f"Username {username} already taken")
 
-        new_user = User(username, password, name, age)
+        new_user = User(username, password)
         self.users[username] = new_user
 
     def login(self, username: str, password: str) -> None:
@@ -49,6 +49,18 @@ class PhiloChat:
 
         del self.users[self.logged_in_user.username]
         self.logout()
+
+    def set_name(self, name: str) -> None:
+        if not self.logged_in_user:
+            raise PermissionDeniedError("No user is logged in")
+
+        self.logged_in_user.set_name(name)
+
+    def set_age(self, age: int) -> None:
+        if not self.logged_in_user:
+            raise PermissionDeniedError("No user is logged in")
+
+        self.logged_in_user.set_age(age)
 
     def new_chat(self, name: str, philosopher_id: int) -> None:
         if not self.logged_in_user:
