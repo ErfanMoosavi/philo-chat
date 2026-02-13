@@ -3,9 +3,10 @@ import sys
 from enum import Enum
 
 from dotenv import load_dotenv
+import argparse
 
-from .console_io_handler import ConsoleIOHandler
 from ..philo_chat import PhiloChat
+from .console_io_handler import ConsoleIOHandler
 
 
 class Commands(Enum):
@@ -199,7 +200,14 @@ class PhiloChatCLI:
 
 
 def main():
-    """Entry point for the philo-chat console script."""
+    parser = argparse.ArgumentParser(description="Philo-Chat-CLI")
+    parser.add_argument("base_url", nargs="?", help="Base Url")
+    parser.add_argument("api_key", nargs="?", help="OpenAI Api Key")
+    parser.add_argument("model", nargs="?", help="Model Name")
+    args = parser.parse_args()
+    base_url = args.base_url
+    api_key = args.api_key
+    model_name = args.model
 
     load_dotenv()
     base_url = os.getenv("BASE_URL")
