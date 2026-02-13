@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile, status
-from .shcemas import (
+from .schema import (
     ChatCreate,
     ChatInput,
     ChatRef,
