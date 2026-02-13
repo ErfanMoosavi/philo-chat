@@ -2,6 +2,14 @@ import os
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile, status
+from shcemas import (
+    ChatCreate,
+    ChatInput,
+    ChatRef,
+    UserAgeUpdate,
+    UserCredentials,
+    UserNameUpdate,
+)
 from src.core import (
     BadRequestError,
     LLMError,
@@ -25,9 +33,9 @@ def root():
 
 
 @app.post("/signup", status_code=status.HTTP_201_CREATED)
-def signup(username: str, password: str):
+def signup(user: UserCredentials):
     try:
-        pc.signup(username, password)
+        pc.signup(user.username, user.password)
         return {"message": "User created successfully"}
 
     except PermissionDeniedError as e:
@@ -37,9 +45,9 @@ def signup(username: str, password: str):
 
 
 @app.post("/login", status_code=status.HTTP_200_OK)
-def login(username: str, password: str):
+def login(user: UserCredentials):
     try:
-        pc.login(username, password)
+        pc.login(user.username, user.password)
         return {"message": "Logged in successfully"}
 
     except PermissionDeniedError as e:
@@ -69,9 +77,9 @@ def delete_account():
 
 
 @app.put("/set_name", status_code=status.HTTP_200_OK)
-def set_name(name: str):
+def set_name(data: UserNameUpdate):
     try:
-        pc.set_name(name)
+        pc.set_name(data.name)
         return {"message": "Set name successfully"}
 
     except PermissionDeniedError as e:
@@ -79,9 +87,9 @@ def set_name(name: str):
 
 
 @app.put("/set_age", status_code=status.HTTP_200_OK)
-def set_age(age: int):
+def set_age(data: UserAgeUpdate):
     try:
-        pc.set_age(age)
+        pc.set_age(data.age)
         return {"message": "Set age successfully"}
 
     except PermissionDeniedError as e:
@@ -99,9 +107,9 @@ async def set_profile_picture(file: UploadFile = File(...)):
 
 
 @app.post("/new_chat", status_code=status.HTTP_200_OK)
-def new_chat(chat_name: str, philosopher_id: int):
+def new_chat(chat: ChatCreate):
     try:
-        pc.new_chat(chat_name, philosopher_id)
+        pc.new_chat(chat.chat_name, chat.philosopher_id)
         return {"message": "Added chat successfully"}
 
     except PermissionDeniedError as e:
@@ -109,9 +117,9 @@ def new_chat(chat_name: str, philosopher_id: int):
 
 
 @app.post("/select_chat", status_code=status.HTTP_200_OK)
-def select_chat(chat_name: str):
+def select_chat(chat: ChatRef):
     try:
-        pc.select_chat(chat_name)
+        pc.select_chat(chat.chat_name)
         return {"message": "Selected chat successfully"}
 
     except PermissionDeniedError as e:
@@ -145,15 +153,29 @@ def exit_chat():
 
 
 @app.delete("/delete_chat", status_code=status.HTTP_200_OK)
-def delete_chat(chat_name: str):
+def delete_chat(chat: ChatRef):
     try:
-        pc.delete_chat(chat_name)
+        pc.delete_chat(chat.chat_name)
         return {"message": "Deleted chat successfully"}
 
     except PermissionDeniedError as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
     except NotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+
+@app.get("/complete_chat", status_code=status.HTTP_200_OK)
+def complete_chat(data: ChatInput):
+    try:
+        ai_msg, user_msg = pc.complete_chat(data.input_text)
+        return ai_msg, user_msg
+
+    except PermissionDeniedError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
+    except BadRequestError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except LLMError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @app.get("/philosophers", status_code=status.HTTP_200_OK)
@@ -164,17 +186,3 @@ def list_philosophers():
 
     except NotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
-
-
-@app.get("/complete_chat", status_code=status.HTTP_200_OK)
-def complete_chat(input_text: str):
-    try:
-        ai_msg, user_msg = pc.complete_chat(input_text)
-        return ai_msg, user_msg
-
-    except PermissionDeniedError as e:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
-    except BadRequestError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-    except LLMError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
