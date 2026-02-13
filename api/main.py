@@ -1,8 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, status, File, UploadFile
-
+from fastapi import FastAPI, File, HTTPException, UploadFile, status
 from src.core import (
     BadRequestError,
     LLMError,
@@ -16,8 +15,8 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 base_url = os.getenv("BASE_URL")
 model_name = os.getenv("MODEL_NAME")
 
-app = FastAPI()
 pc = PhiloChat(base_url=base_url, api_key=openai_api_key, model_name=model_name)
+app = FastAPI()
 
 
 @app.get("/")
