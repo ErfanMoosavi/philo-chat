@@ -59,7 +59,7 @@ class User:
 
     def complete_chat(self, input_text: str, chat_completer) -> tuple[Message, Message]:
         if not self.selected_chat:
-            raise BadRequestError("No chats selected")
+            raise BadRequestError("No chat is selected")
 
         return self.selected_chat.complete_chat(
             input_text, self.username, self.name, self.age, chat_completer
