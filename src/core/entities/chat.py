@@ -1,5 +1,5 @@
 from ..exceptions import BadRequestError
-from ..utils.prompt_loading import load_prompt
+from ..utils import load_prompt
 from .message import Message
 from .philosopher import Philosopher
 

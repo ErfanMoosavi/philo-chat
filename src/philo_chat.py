@@ -1,11 +1,7 @@
 import json
 from pathlib import Path
 
-from .core.entities.chat import Chat
-from .core.entities.chat_completer import ChatCompleter
-from .core.entities.message import Message
-from .core.entities.philosopher import Philosopher
-from .core.entities.user import User
+from .core.entities import Chat, ChatCompleter, Message, Philosopher, User
 from .core.exceptions import BadRequestError, NotFoundError, PermissionDeniedError
 
 
