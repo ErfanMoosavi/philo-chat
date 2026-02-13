@@ -32,8 +32,8 @@ def root():
     return {"message": "Philosopher Chat API", "status": "running"}
 
 
-@app.post("/signup", status_code=status.HTTP_201_CREATED)
-def signup(user: UserCredentials):
+@app.post("/users", status_code=status.HTTP_201_CREATED)
+def create_user(user: UserCredentials):
     try:
         pc.signup(user.username, user.password)
         return {"message": "User created successfully"}
@@ -45,7 +45,7 @@ def signup(user: UserCredentials):
 
 
 @app.post("/login", status_code=status.HTTP_200_OK)
-def login(user: UserCredentials):
+def create_token(user: UserCredentials):
     try:
         pc.login(user.username, user.password)
         return {"message": "Logged in successfully"}
@@ -56,8 +56,8 @@ def login(user: UserCredentials):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 
-@app.post("/logout", status_code=status.HTTP_200_OK)
-def logout():
+@app.post("/profile/logout", status_code=status.HTTP_200_OK)
+def delete_token():
     try:
         pc.logout()
         return {"message": "Logged out successfully"}
@@ -66,8 +66,8 @@ def logout():
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
 
-@app.delete("/delete_account", status_code=status.HTTP_200_OK)
-def delete_account():
+@app.delete("/profile/delete_account", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user():
     try:
         pc.delete_account()
         return {"message": "Account deleted successfully"}
@@ -76,8 +76,8 @@ def delete_account():
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
 
-@app.put("/set_name", status_code=status.HTTP_200_OK)
-def set_name(data: UserNameUpdate):
+@app.put("/profile/name", status_code=status.HTTP_200_OK)
+def update_name(data: UserNameUpdate):
     try:
         pc.set_name(data.name)
         return {"message": "Set name successfully"}
@@ -86,8 +86,8 @@ def set_name(data: UserNameUpdate):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
 
-@app.put("/set_age", status_code=status.HTTP_200_OK)
-def set_age(data: UserAgeUpdate):
+@app.put("/profile/age", status_code=status.HTTP_200_OK)
+def update_age(data: UserAgeUpdate):
     try:
         pc.set_age(data.age)
         return {"message": "Set age successfully"}
@@ -96,8 +96,8 @@ def set_age(data: UserAgeUpdate):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
 
-@app.post("/set_profile_picture", status_code=status.HTTP_200_OK)
-async def set_profile_picture(file: UploadFile = File(...)):
+@app.post("/profile/picture", status_code=status.HTTP_200_OK)
+async def upload_profile_picture(file: UploadFile = File(...)):
     try:
         pc.set_profile_picture(file.file, file.filename)
         return {"message": "Set profile picture successfully"}
@@ -106,8 +106,8 @@ async def set_profile_picture(file: UploadFile = File(...)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
 
-@app.post("/new_chat", status_code=status.HTTP_200_OK)
-def new_chat(chat: ChatCreate):
+@app.post("/chats", status_code=status.HTTP_201_CREATED)
+def create_chat(chat: ChatCreate):
     try:
         pc.new_chat(chat.chat_name, chat.philosopher_id)
         return {"message": "Added chat successfully"}
@@ -116,7 +116,7 @@ def new_chat(chat: ChatCreate):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
 
-@app.post("/select_chat", status_code=status.HTTP_200_OK)
+@app.post("/chats/select_chat", status_code=status.HTTP_200_OK)
 def select_chat(chat: ChatRef):
     try:
         pc.select_chat(chat.chat_name)
@@ -128,8 +128,8 @@ def select_chat(chat: ChatRef):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 
-@app.get("/chat_list", status_code=status.HTTP_200_OK)
-def list_chats():
+@app.get("/chats", status_code=status.HTTP_200_OK)
+def get_chats():
     try:
         chat_list = pc.list_chats()
         return chat_list
@@ -152,10 +152,10 @@ def exit_chat():
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@app.delete("/delete_chat", status_code=status.HTTP_200_OK)
-def delete_chat(chat: ChatRef):
+@app.delete("/delete_chat/{chat_name}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_chat(chat_name: str):
     try:
-        pc.delete_chat(chat.chat_name)
+        pc.delete_chat(chat_name)
         return {"message": "Deleted chat successfully"}
 
     except PermissionDeniedError as e:
@@ -164,8 +164,8 @@ def delete_chat(chat: ChatRef):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 
-@app.get("/complete_chat", status_code=status.HTTP_200_OK)
-def complete_chat(data: ChatInput):
+@app.post("/complete_chat", status_code=status.HTTP_200_OK)
+def create_message(data: ChatInput):
     try:
         ai_msg, user_msg = pc.complete_chat(data.input_text)
         return ai_msg, user_msg
