@@ -59,7 +59,7 @@ def delete_user(pc: PhiloChat = Depends(get_philo_chat)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
 
-@router.put("/profile/name", status_code=status.HTTP_200_OK)
+@router.put("/users/{username}", status_code=status.HTTP_200_OK)
 def update_name(data: UserNameUpdate, pc: PhiloChat = Depends(get_philo_chat)):
     try:
         pc.set_name(data.name)
@@ -69,7 +69,7 @@ def update_name(data: UserNameUpdate, pc: PhiloChat = Depends(get_philo_chat)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
 
-@router.put("/profile/age", status_code=status.HTTP_200_OK)
+@router.put("/users/{username}", status_code=status.HTTP_200_OK)
 def update_age(data: UserAgeUpdate, pc: PhiloChat = Depends(get_philo_chat)):
     try:
         pc.set_age(data.age)
@@ -101,7 +101,7 @@ def create_chat(chat: ChatCreate, pc: PhiloChat = Depends(get_philo_chat)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
 
-@router.post("/chats/select_chat", status_code=status.HTTP_200_OK)
+@router.post("/chats/{chat_name}/select", status_code=status.HTTP_200_OK)
 def select_chat(chat: ChatRef, pc: PhiloChat = Depends(get_philo_chat)):
     try:
         pc.select_chat(chat.chat_name)
@@ -125,7 +125,7 @@ def get_chats(pc: PhiloChat = Depends(get_philo_chat)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 
-@router.put("/exit_chat", status_code=status.HTTP_200_OK)
+@router.put("/chats/exit", status_code=status.HTTP_200_OK)
 def exit_chat(pc: PhiloChat = Depends(get_philo_chat)):
     try:
         pc.exit_chat()
@@ -149,7 +149,7 @@ def delete_chat(chat_name: str, pc: PhiloChat = Depends(get_philo_chat)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 
-@router.post("/complete_chat", status_code=status.HTTP_200_OK)
+@router.post("/chats/{chat_name}/messages", status_code=status.HTTP_200_OK)
 def create_message(data: ChatInput, pc: PhiloChat = Depends(get_philo_chat)):
     try:
         ai_msg, user_msg = pc.complete_chat(data.input_text)
