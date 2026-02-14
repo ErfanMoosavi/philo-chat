@@ -34,7 +34,11 @@ base_url = os.getenv("BASE_URL")
 model_name = os.getenv("MODEL_NAME")
 
 pc = PhiloChat(base_url=base_url, api_key=openai_api_key, model_name=model_name)
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    title="Philo-Chat",
+    description="Chat with your favorite philosophers - Nietzsche, Socrates, and more-in real-time!",
+    lifespan=lifespan,
+)
 
 
 @app.get("/")
