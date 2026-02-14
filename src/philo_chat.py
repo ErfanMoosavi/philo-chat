@@ -1,5 +1,4 @@
 import json
-import shutil
 from pathlib import Path
 
 from .core.entities import Chat, ChatCompleter, Message, Philosopher, User
@@ -12,8 +11,6 @@ class PhiloChat:
         self.users: dict[str, User] = {}
         self.philosophers: dict[int, Philosopher] = self._load_philosophers()
         self.logged_in_user: User | None = None
-        self.images_dir = Path(__file__).parent / "data/user_images"
-        self.images_dir.mkdir(parents=True, exist_ok=True)
 
     def signup(self, username: str, password: str) -> None:
         if self.logged_in_user:
@@ -60,19 +57,6 @@ class PhiloChat:
             raise PermissionDeniedError("No user is logged in")
 
         self.logged_in_user.set_age(age)
-
-    def set_profile_picture(self, file_object, filename: str) -> None:
-        if not self.logged_in_user:
-            raise PermissionDeniedError("No user is logged in")
-
-        extension = Path(filename).suffix
-        new_filename = f"{self.logged_in_user.username}_profile{extension}"
-        destination = self.images_dir / new_filename
-
-        with open(destination, "wb") as buffer:
-            shutil.copyfileobj(file_object, buffer)
-
-        self.logged_in_user.set_profile_picture(str(destination))
 
     def new_chat(self, name: str, philosopher_id: int) -> None:
         if not self.logged_in_user:

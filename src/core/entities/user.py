@@ -10,7 +10,6 @@ class User:
         self.password = password
         self.name = "Not Provided"
         self.age = "Not Provided"
-        self.profile_picture: str | None = None
         self.chats: dict[str, Chat] = {}
         self.selected_chat: Chat | None = None
 
@@ -19,9 +18,6 @@ class User:
 
     def set_age(self, age: int) -> None:
         self.age = age
-
-    def set_profile_picture(self, file_path: str) -> None:
-        self.profile_picture = file_path
 
     def new_chat(self, name: str, philosopher: Philosopher) -> None:
         if self._find_chat(name):
