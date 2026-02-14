@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "philo-chat"
-version = "0.3.0"
+version = "0.3.1"
 authors = [{ name = "Erfan Moosavi", email = "erfanmoosavi84@gmail.com" }]
 description = "Chat with your favorite philosophers - Nietzsche, Socrates, and more!"
 readme = "README.md"
