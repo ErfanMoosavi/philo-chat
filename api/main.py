@@ -1,15 +1,8 @@
 import os
+from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile, status
-from .schema import (
-    ChatCreate,
-    ChatInput,
-    ChatRef,
-    UserAgeUpdate,
-    UserCredentials,
-    UserNameUpdate,
-)
 from src.core import (
     BadRequestError,
     LLMError,
@@ -18,13 +11,30 @@ from src.core import (
 )
 from src.philo_chat import PhiloChat
 
+from .schema import (
+    ChatCreate,
+    ChatInput,
+    ChatRef,
+    UserAgeUpdate,
+    UserCredentials,
+    UserNameUpdate,
+)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("App startup")
+    yield
+    print("App shutdown")
+
+
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 base_url = os.getenv("BASE_URL")
 model_name = os.getenv("MODEL_NAME")
 
 pc = PhiloChat(base_url=base_url, api_key=openai_api_key, model_name=model_name)
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")
